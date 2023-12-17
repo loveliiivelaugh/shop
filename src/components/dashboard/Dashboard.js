@@ -50,8 +50,8 @@ const NavigationBar = (props, { open, setOpen }) => {
         >
           Sell It
         </Typography>
-        {props.navBarIcons 
-          ? props.navBarIcons.map(el => el)
+        {props.navBarItems 
+          ? props.navBarItems.map(el => el)
           : (
           <>
             <IconButton color="inherit">
@@ -79,7 +79,7 @@ const NavigationBar = (props, { open, setOpen }) => {
 function DashboardContent(props) {
   return (
       <Box sx={{ display: 'flex' }}>
-        <NavigationBar open={false} navBarIcons={props.navBarIcons} />
+        <NavigationBar open={false} navBarItems={props.navBarItems} />
         <Box
           component="main"
           sx={{

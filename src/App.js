@@ -30,7 +30,20 @@ function useColorMode() {
   return { colorMode, toggleMode };
 }
 
-function App(props) {
+function ViewProductsButton() {
+  const navigate = useNavigate();
+  return (
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={() => navigate('/products')}
+    >
+      View Products
+    </Button>
+  );
+}
+
+function Layout(props) {
   // Hooks / State
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -49,7 +62,7 @@ function App(props) {
   }
 
   
-  const navBarIcons = [
+  const navBarItems = [
     <Tooltip title="Home">
       <IconButton color="inherit" onClick={() => navigate("/")}>
         <HomeIcon />
@@ -98,26 +111,46 @@ function App(props) {
           <Button variant="contained" color="primary" onClick={handleCheckout}>Checkout</Button>
         </Box>
       </Drawer>
-      <Dashboard navBarIcons={navBarIcons}>
+      <Dashboard navBarItems={navBarItems}>
         {props.children}
       </Dashboard>
     </>
   );
-}
+};
+
+const HomePage = (props) => {
+  return (
+    <Box>
+      <Typography variant="h2">Home Page</Typography>
+      <ViewProductsButton />
+    </Box>
+  );
+};
+
+const SingleProductPage = (props) => {
+  return (
+    <Box>
+      <Typography variant="h2">Single Product Page</Typography>
+      <ViewProductsButton />
+    </Box>
+  );
+};
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App><ProductsSection /></App>,
+    element: <HomePage />,
   },
   {
     path: "/products",
-    element: <App><ProductsSection /></App>,
+    element: <ProductsSection />,
   },
   {
     path: "/product/:id",
-    element: <App><>Single Product Page</></App>,
+    element: <SingleProductPage />,
   },
-]);
+]
+// Add layout to all routes
+.map((route) => ({...route, element: <Layout>{route.element}</Layout>})));
 
 export default () => <RouterProvider router={router} />;

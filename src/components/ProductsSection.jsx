@@ -3,29 +3,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Button, Card, CardActionArea, Grid } from '@mui/material'
 
+import { api } from '../api'
 import { shop as shopActions } from '../redux'
 
-
-const item = {
-  name: 'Product',
-  price: 10.00,
-  description: 'This is a product.',
-  image: 'https://picsum.photos/200/300'
-};
-
-const items = new Array(30)
-  .fill(item)
-  .map((item, i) => ({ 
-    ...item, 
-    id: i, 
-    name: `${item.name} ${i + 1}` 
-  }));
 
 const ProductsSection = (props) => {
   // Hooks / State
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { shop } = useSelector(state => state);
+  const items = api.getProducts();
 
   // Helpers
   const cart = shop.lineItems || [];
