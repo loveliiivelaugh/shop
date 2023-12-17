@@ -1,7 +1,14 @@
 import { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Box, Button, Card, CardActionArea, Divider, Drawer, Grid, IconButton, List, ListItem, ListItemText, Tooltip, Typography } from '@mui/material';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import { 
+  Box, Button, Card, CardActionArea, Divider, Drawer, 
+  Grid, IconButton, List, ListItem, ListItemText, Tooltip, Typography
+} from '@mui/material';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import HomeIcon from '@mui/icons-material/Home';
@@ -34,19 +41,29 @@ const items = new Array(30)
   }));
 
 function App() {
+  // Hooks / State
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { shop } = useSelector(state => state);
-  // const navigate = useNavigate()
   const { colorMode, toggleMode } = useColorMode();
   const [cartOpen, setCartOpen] = useState(false);
-  console.log("states", shop, shopActions);
+
+  // Helpers
   const cart = shop.lineItems || [];
-  const cartIncludesItem = item => cart.find(cartItem => cartItem.id === item.id)
+
+  // Handlers
+  const handleCardClick = (item) => navigate("/product/" + item.id);
+  const cartIncludesItem = item => cart.find(cartItem => cartItem.id === item.id);
   const calculateTotal = (x) => x.reduce((acc, item) => acc + item.price, 0);
+  const handleCheckout = () => {
+    // dispatch(shopActions.checkout());
+    setCartOpen(false);
+  }
+
   
   const navBarIcons = [
     <Tooltip title="Home">
-      <IconButton color="inherit" onClick={() => {}}>
+      <IconButton color="inherit" onClick={() => navigate("/")}>
         <HomeIcon />
       </IconButton>
     </Tooltip>,
@@ -82,7 +99,6 @@ function App() {
           <List>
           {cart.length && cart.map(item => (
             <ListItem className="product" key={item.id}>
-            {console.log("item", item)}
               <ListItemText primary={item.title} secondary={"$" + item.price} />
               <Button variant="outlined" color="error" onClick={() => dispatch(shopActions.removeProduct(item))}>Remove</Button>
             </ListItem>
@@ -91,15 +107,16 @@ function App() {
           <Divider />
           <Typography variant="body1" gutterBottom>Items: {cart.length}</Typography>
           <Typography variant="body1" gutterBottom>Total: ${calculateTotal(cart)}</Typography>
-          <Button variant="contained" color="primary" onClick={() => {}}>Checkout</Button>
+          <Button variant="contained" color="primary" onClick={handleCheckout}>Checkout</Button>
         </Box>
       </Drawer>
     <Dashboard navBarIcons={navBarIcons}>
+      <Outlet />
       {/* Products Section */}
       <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
       {items.map(item => (
         <Grid item md={3} className="product" key={item.id}>
-          <Card sx={{p:2}}>
+          <Card sx={{p:2}} onClick={() => handleCardClick(item)}>
             <img src={item.image} alt={item.name} />
             <h3>{item.name}</h3>
             <p>Price: ${item.price}</p>
@@ -135,4 +152,19 @@ function App() {
   );
 }
 
-export default App;
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+  },
+  {
+    path: "/products",
+    element: <App />,
+  },
+  {
+    path: "/product/:id",
+    element: <>Single Product Page</>,
+  },
+]);
+
+export default () => <RouterProvider router={router} />;
