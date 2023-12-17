@@ -8,6 +8,9 @@ This project is a simple shop with a list of products and a shopping cart. The u
 
 The project is deployed to AWS Amplify. The CI/CD pipeline is configured to deploy the project to AWS Amplify when a new commit is pushed to the `main` branch.
 
+[View Live]("https://main.d172osul7s4f7g.amplifyapp.com/")
+[View Source]("https://github.com/loveliiivelaugh/shop")
+
 ## Technologies
 
 - React
