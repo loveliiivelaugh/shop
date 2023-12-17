@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -9,17 +8,11 @@ import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
-import { Tooltip } from '@mui/material'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import HomeIcon from '@mui/icons-material/Home';
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-
-// Hooks
-// import { useColorMode } from '../../../../contexts/ColorModeProvider';
 
 // Components
 import { mainListItems, secondaryListItems } from './listItems';
@@ -42,7 +35,7 @@ function Copyright(props) {
   );
 }
 
-const NavigationBar = ({ open, setOpen }) => {
+const NavigationBar = (props, { open, setOpen }) => {
   // const navigate = useNavigate()
   // const { mode: colorMode, toggleMode } = useColorMode()
   return (
@@ -73,25 +66,25 @@ const NavigationBar = ({ open, setOpen }) => {
         >
           Dashboard
         </Typography>
-        <IconButton color="inherit">
-          <Badge badgeContent={0} color="secondary">
-            <AccountBalanceWalletIcon />
-          </Badge>
-        </IconButton>
-        <IconButton color="inherit">
-          <Badge badgeContent={4} color="secondary">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        {/* <IconButton color="inherit" onClick={() => navigate('/')}> */}
-        <IconButton color="inherit">
-          <HomeIcon />
-        </IconButton>
-        {/* <Tooltip title={colorMode === 'light' ? 'Light Mode' : 'Dark Mode'}>
-          <IconButton color="inherit" onClick={toggleMode}>
-            {colorMode === 'light' ? <LightModeIcon /> : <DarkModeIcon />}
-          </IconButton>
-        </Tooltip> */}
+        {props.navBarIcons 
+          ? props.navBarIcons.map(el => el)
+          : (
+          <>
+            <IconButton color="inherit">
+              <Badge badgeContent={0} color="secondary">
+                <AccountBalanceWalletIcon />
+              </Badge>
+            </IconButton>
+            <IconButton color="inherit">
+              <Badge badgeContent={4} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton color="inherit">
+              <HomeIcon />
+            </IconButton>
+          </>
+        )}
       </Toolbar>
     </AppBar>
 
@@ -126,7 +119,7 @@ function DashboardContent(props) {
   const [open, setOpen] = useState(true);
   return (
       <Box sx={{ display: 'flex' }}>
-        <NavigationBar open={open} setOpen={setOpen} />
+        <NavigationBar open={open} setOpen={setOpen} navBarIcons={props.navBarIcons} />
         <SidePanel open={open} setOpen={setOpen} />
         <Box
           component="main"
