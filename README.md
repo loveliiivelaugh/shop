@@ -19,4 +19,13 @@ The project is deployed to AWS Amplify. The CI/CD pipeline is configured to depl
 - AWS Cognito
 - Stripe
 
-## How to run
+## Status
+
+The project is still in progress.
+Currently the rough layout and functionality of the web app is done.
+The next steps are:
+
+- Finish the Home page
+- Finish the Single Product page
+- Add a checkout page
+- Set up Stripe payment
