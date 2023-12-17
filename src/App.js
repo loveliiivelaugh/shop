@@ -1,12 +1,15 @@
 import { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, CardActionArea, Drawer, Grid, IconButton, Tooltip } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
+import { Box, Button, Card, CardActionArea, Divider, Drawer, Grid, IconButton, List, ListItem, ListItemText, Tooltip, Typography } from '@mui/material';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import Dashboard from './components/dashboard/Dashboard.js';
+import { shop as shopActions } from './redux'
 import './App.css';
+import { Badge } from '@mui/base';
 
 
 function useColorMode() {
@@ -31,11 +34,15 @@ const items = new Array(30)
   }));
 
 function App() {
+  const dispatch = useDispatch();
+  const { shop } = useSelector(state => state);
   // const navigate = useNavigate()
   const { colorMode, toggleMode } = useColorMode();
   const [cartOpen, setCartOpen] = useState(false);
-  const cart = [];
+  console.log("states", shop, shopActions);
+  const cart = shop.lineItems || [];
   const cartIncludesItem = item => cart.find(cartItem => cartItem.id === item.id)
+  const calculateTotal = (x) => x.reduce((acc, item) => acc + item.price, 0);
   
   const navBarIcons = [
     <Tooltip title="Home">
@@ -44,9 +51,11 @@ function App() {
       </IconButton>
     </Tooltip>,
     <Tooltip title="Shopping Cart">
-      <IconButton color="inherit" onClick={() => setCartOpen(!cartOpen)}>
-        <ShoppingCart />
-      </IconButton>
+      <Badge badgeContent={cart.length} color="secondary">
+        <IconButton color="inherit" onClick={() => setCartOpen(!cartOpen)}>
+          <ShoppingCart />
+        </IconButton>
+      </Badge>
     </Tooltip>,
     <Tooltip title={colorMode === 'light' ? 'Light Mode' : 'Dark Mode'}>
       <IconButton color="inherit" onClick={toggleMode}>
@@ -68,17 +77,21 @@ function App() {
           onClick={() => setCartOpen(false)}
           onKeyDown={() => setCartOpen(false)}
         >
-          <h2>Cart</h2>
-          <div className="products">
-            <div className="product">
-              <h3>Product 1</h3>
-              <p>Price: $10.00</p>
-            </div>
-            <div className="product">
-              <h3>Product 2</h3>
-              <p>Price: $20.00</p>
-            </div>
-          </div>
+          <Typography variant="h3">Cart</Typography>
+          <Divider />
+          <List>
+          {cart.length && cart.map(item => (
+            <ListItem className="product" key={item.id}>
+            {console.log("item", item)}
+              <ListItemText primary={item.title} secondary={"$" + item.price} />
+              <Button variant="outlined" color="error" onClick={() => dispatch(shopActions.removeProduct(item))}>Remove</Button>
+            </ListItem>
+          ))}
+          </List>
+          <Divider />
+          <Typography variant="body1" gutterBottom>Items: {cart.length}</Typography>
+          <Typography variant="body1" gutterBottom>Total: ${calculateTotal(cart)}</Typography>
+          <Button variant="contained" color="primary" onClick={() => {}}>Checkout</Button>
         </Box>
       </Drawer>
     <Dashboard navBarIcons={navBarIcons}>
@@ -92,10 +105,26 @@ function App() {
             <p>Price: ${item.price}</p>
             <p>{item.description}</p>
             <CardActionArea sx={{ display: "flex", justifyContent: "end", gap: 1 }}>
-              {cartIncludesItem(item) && <Button color="error" variant="outlined">Remove</Button>}
               {cartIncludesItem(item) ? (
-                <Button color="primary" variant="contained">+</Button>
-              ) : (<Button color="primary" variant="contained">Add to Cart</Button>)}
+                <>
+                  <Button 
+                    color="error" 
+                    variant="outlined"
+                    onClick={() => dispatch(shopActions.removeProduct(item))}
+                  >
+                    Remove
+                  </Button>
+                  <Button color="primary" variant="contained">+</Button>
+                </>
+              ) : (
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={() => dispatch(shopActions.addProduct(item))}
+                >
+                  Add to Cart
+                </Button>
+              )}
             </CardActionArea>
           </Card>
         </Grid>

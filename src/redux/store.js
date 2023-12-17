@@ -5,13 +5,13 @@ import { setupListeners } from '@reduxjs/toolkit/query/react'
 // import { shopApi } from '../api'
 
 // Reducers
-// import { shopSlice, alertSlice, systemSlice, authSlice, posSlice } from './features'
+import { shopSlice, alertSlice } from './features'
 
 
 const store = configureStore({
   reducer: {
-    // shop: shopSlice,
-    // alerts: alertSlice,
+    shop: shopSlice,
+    alerts: alertSlice,
 
     // // Add the generated reducer as a specific top-level slice
     // [shopApi.reducerPath]: shopApi.reducer,
