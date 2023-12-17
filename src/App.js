@@ -1,6 +1,6 @@
 // Packages
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   createBrowserRouter,
@@ -21,6 +21,7 @@ import ProductsSection from './components/ProductsSection.jsx';
 
 // Utilities
 import { shop as shopActions } from './redux'
+import { api } from './api';
 import './App.css';
 
 
@@ -128,10 +129,23 @@ const HomePage = (props) => {
 };
 
 const SingleProductPage = (props) => {
+  const dispatch = useDispatch();
+  const params = useParams();
+  const item = api.getProducts().find(item => item.id === parseInt(params.id));
+  console.log("SingleProductPage(): ", item);
   return (
     <Box>
-      <Typography variant="h2">Single Product Page</Typography>
-      <ViewProductsButton />
+      <Box>
+        <Typography variant="h2">Single Product Page</Typography>
+        <ViewProductsButton />
+      </Box>
+      <img src={item.image} alt={item.name} />
+      <Typography variant="h3">{item.name}</Typography>
+      <Typography variant="body1">{item.description}</Typography>
+      <Typography variant="body1">${item.price}</Typography>
+      <Button variant="contained" color="primary" onClick={() => dispatch(shopActions.addProduct(item))}>
+        Add to Cart
+      </Button>
     </Box>
   );
 };
